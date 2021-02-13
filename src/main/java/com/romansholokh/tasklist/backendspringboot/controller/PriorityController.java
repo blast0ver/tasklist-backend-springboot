@@ -48,4 +48,25 @@ public class PriorityController
 
         return ResponseEntity.ok(priorityRepository.save(priority));
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<Priority> update(@RequestBody Priority priority)
+    {
+        if (priority.getId() == null || priority.getId() <= 0)
+        {
+            return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (priority.getTitle() == null || priority.getTitle().trim().length() == 0)
+        {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (priority.getColor() == null
+                || priority.getColor().trim().length() == 0
+                || !(priority.getColor().startsWith("#")))
+        {
+            return new ResponseEntity("missed param or invalid format: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(priorityRepository.save(priority));
+    }
 }
