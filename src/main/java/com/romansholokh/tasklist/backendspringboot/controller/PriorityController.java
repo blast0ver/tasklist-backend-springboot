@@ -33,7 +33,7 @@ public class PriorityController
     {
         if(priority.getId() != null && priority.getId() != 0)
         {
-            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("redundant param: id MUST NOT exist or MUST be null or 0", HttpStatus.NOT_ACCEPTABLE);
         }
         else if (priority.getTitle() == null || priority.getTitle().trim().length() == 0)
         {

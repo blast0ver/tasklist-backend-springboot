@@ -2,6 +2,8 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.repo.CategoryRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,17 @@ public class CategoryController
     }
 
     @PostMapping("/add")
-    public Category add(@RequestBody Category category)
+    public ResponseEntity<Category> add(@RequestBody Category category)
     {
-        return categoryRepository.save(category);
+        if (category.getId() != null && category.getId() != 0)
+        {
+            return new ResponseEntity("redundant param: id MUST NOT exist or MUST be null or 0", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (category.getTitle() == null || category.getTitle().trim().length() == 0)
+        {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(categoryRepository.save(category));
     }
 }
