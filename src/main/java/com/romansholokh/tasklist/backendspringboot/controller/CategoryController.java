@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/category")
@@ -55,5 +57,22 @@ public class CategoryController
         }
 
         return ResponseEntity.ok(categoryRepository.save(category));
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Category> getById(@PathVariable Long id)
+    {
+        Category category = null;
+        Optional<Category> optional = categoryRepository.findById(id);
+        if (optional.isPresent())
+        {
+            category = optional.get();
+        }
+        else
+        {
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(category);
     }
 }
