@@ -2,9 +2,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.repo.CategoryRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,13 +17,17 @@ public class CategoryController
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/test")
-    public List<Category> test()
+    @GetMapping("/getAll")
+    public List<Category> getAll()
     {
         List<Category> list = categoryRepository.findAll();
 
-        System.out.println("list = " + list);
-
         return list;
+    }
+
+    @PostMapping("/add")
+    public Category add(@RequestBody Category category)
+    {
+        return categoryRepository.save(category);
     }
 }
