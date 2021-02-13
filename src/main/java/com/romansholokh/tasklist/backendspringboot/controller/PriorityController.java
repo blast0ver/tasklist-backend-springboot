@@ -2,6 +2,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
 import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +86,20 @@ public class PriorityController
         }
 
         return ResponseEntity.ok(priority);
+    }
+
+    @DeleteMapping("/delete/id/{id}")
+    public ResponseEntity deleteById(@PathVariable Long id)
+    {
+        try
+        {
+            priorityRepository.deleteById(id);
+        }
+        catch (EmptyResultDataAccessException e)
+        {
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok("Priority with id = " + id + " was deleted");
     }
 }
