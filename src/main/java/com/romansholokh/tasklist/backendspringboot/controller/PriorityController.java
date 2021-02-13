@@ -24,7 +24,7 @@ public class PriorityController
     @GetMapping("/getAll")
     public List<Priority> getAll()
     {
-        List<Priority> list = priorityRepository.findAll();
+        List<Priority> list = priorityRepository.findAllByOrderByIdAsc();
 
         return list;
     }
