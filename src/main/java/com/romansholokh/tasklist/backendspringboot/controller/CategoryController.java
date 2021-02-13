@@ -41,4 +41,19 @@ public class CategoryController
 
         return ResponseEntity.ok(categoryRepository.save(category));
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<Category> update(@RequestBody Category category)
+    {
+        if (category.getId() == null || category.getId() <= 0)
+        {
+            return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (category.getTitle() == null || category.getTitle().trim().length() == 0)
+        {
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(categoryRepository.save(category));
+    }
 }
