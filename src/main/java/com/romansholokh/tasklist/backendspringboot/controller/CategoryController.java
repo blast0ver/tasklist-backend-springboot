@@ -2,12 +2,12 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.repo.CategoryRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -74,5 +74,20 @@ public class CategoryController
         }
 
         return ResponseEntity.ok(category);
+    }
+
+    @DeleteMapping("/delete/id/{id}")
+    public ResponseEntity deleteById(@PathVariable Long id)
+    {
+        try
+        {
+            categoryRepository.deleteById(id);
+        }
+        catch (EmptyResultDataAccessException e)
+        {
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok("Category with id = " + id + " was deleted");
     }
 }

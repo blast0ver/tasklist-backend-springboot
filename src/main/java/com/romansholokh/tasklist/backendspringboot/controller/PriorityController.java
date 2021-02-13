@@ -1,9 +1,7 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
-import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
 import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
