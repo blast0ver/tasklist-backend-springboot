@@ -1,5 +1,6 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
+import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
 import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
 import org.springframework.http.HttpMethod;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/priority")
@@ -68,5 +70,22 @@ public class PriorityController
         }
 
         return ResponseEntity.ok(priorityRepository.save(priority));
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Priority> getById(@PathVariable Long id)
+    {
+        Priority priority = null;
+        Optional<Priority> optional = priorityRepository.findById(id);
+        if (optional.isPresent())
+        {
+            priority = optional.get();
+        }
+        else
+        {
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return ResponseEntity.ok(priority);
     }
 }
