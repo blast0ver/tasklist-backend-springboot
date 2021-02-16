@@ -2,6 +2,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
 import com.romansholokh.tasklist.backendspringboot.repo.CategoryRepository;
+import com.romansholokh.tasklist.backendspringboot.search.CategorySearchValues;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,4 +91,13 @@ public class CategoryController
 
         return ResponseEntity.ok("Category with id = " + id + " was deleted");
     }
+
+//    Search by any parameters CategorySearchValues
+    @PostMapping("/search")
+    public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues)
+    {
+//        If the text is empty or null instead of the text, all categories will be returned
+        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+    }
+
 }
