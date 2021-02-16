@@ -2,6 +2,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
 import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
+import com.romansholokh.tasklist.backendspringboot.search.PrioritySearchValues;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,5 +102,11 @@ public class PriorityController
         }
 
         return ResponseEntity.ok("Priority with id = " + id + " was deleted");
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues)
+    {
+        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
     }
 }

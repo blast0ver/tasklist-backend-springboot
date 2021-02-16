@@ -96,7 +96,7 @@ public class CategoryController
     @PostMapping("/search")
     public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues)
     {
-//        If the text is empty or null instead of the text, all categories will be returned
+//        If the text is empty or null instead of the text, will be returned all categories
         return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
     }
 
