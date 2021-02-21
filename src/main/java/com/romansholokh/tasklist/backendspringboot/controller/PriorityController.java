@@ -3,6 +3,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
 import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
 import com.romansholokh.tasklist.backendspringboot.search.PrioritySearchValues;
+import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class PriorityController
     @GetMapping("/getAll")
     public List<Priority> getAll()
     {
+        Logger.printClassMethodName(Thread.currentThread());
         List<Priority> list = priorityRepository.findAllByOrderByIdAsc();
 
         return list;
@@ -33,6 +35,7 @@ public class PriorityController
     @PostMapping("/add")
     public ResponseEntity<Priority> add(@RequestBody Priority priority)
     {
+        Logger.printClassMethodName(Thread.currentThread());
         if(priority.getId() != null && priority.getId() != 0)
         {
             return new ResponseEntity("redundant param: id MUST NOT exist or MUST be null or 0", HttpStatus.NOT_ACCEPTABLE);
@@ -54,6 +57,7 @@ public class PriorityController
     @PutMapping("/update")
     public ResponseEntity<Priority> update(@RequestBody Priority priority)
     {
+        Logger.printClassMethodName(Thread.currentThread());
         if (priority.getId() == null || priority.getId() <= 0)
         {
             return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
@@ -75,6 +79,7 @@ public class PriorityController
     @GetMapping("/id/{id}")
     public ResponseEntity<Priority> getById(@PathVariable Long id)
     {
+        Logger.printClassMethodName(Thread.currentThread());
         Priority priority = null;
         Optional<Priority> optional = priorityRepository.findById(id);
         if (optional.isPresent())
@@ -92,6 +97,7 @@ public class PriorityController
     @DeleteMapping("/delete/id/{id}")
     public ResponseEntity deleteById(@PathVariable Long id)
     {
+        Logger.printClassMethodName(Thread.currentThread());
         try
         {
             priorityRepository.deleteById(id);
@@ -107,6 +113,7 @@ public class PriorityController
     @PostMapping("/search")
     public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues)
     {
+        Logger.printClassMethodName(Thread.currentThread());
         return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
     }
 }
