@@ -2,6 +2,7 @@ package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Task;
 import com.romansholokh.tasklist.backendspringboot.repo.TaskRepository;
+import com.romansholokh.tasklist.backendspringboot.search.TaskSearchValues;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -96,5 +97,19 @@ public class TaskController
         }
 
         return ResponseEntity.ok("Task with id = " + id + " was deleted");
+    }
+
+    //    Search by any parameters TaskSearchValues
+    @PostMapping("/search")
+    public ResponseEntity<List<Task>> search(@RequestBody TaskSearchValues taskSearchValues)
+    {
+        Logger.printClassMethodName(Thread.currentThread());
+//        Exclude NullPointerException
+        String title = taskSearchValues.getTitle() != null ? taskSearchValues.getTitle() : null;
+        Integer completed = taskSearchValues.getCompleted() != null ? taskSearchValues.getCompleted() : null;
+        Long priorityId = taskSearchValues.getPriorityId() != null ? taskSearchValues.getPriorityId() : null;
+        Long categoryId = taskSearchValues.getCategoryId() != null ? taskSearchValues.getCategoryId() : null;
+
+        return ResponseEntity.ok(taskRepository.findByParams(title, completed, priorityId, categoryId));
     }
 }

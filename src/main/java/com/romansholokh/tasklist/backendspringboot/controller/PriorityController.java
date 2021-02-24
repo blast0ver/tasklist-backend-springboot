@@ -114,6 +114,6 @@ public class PriorityController
     public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues)
     {
         Logger.printClassMethodName(Thread.currentThread());
-        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
+        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getTitle()));
     }
 }

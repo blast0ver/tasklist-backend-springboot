@@ -9,7 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CategorySearchValues
+public class TaskSearchValues
 {
     private String title;
+    private Integer completed;
+    private Long priorityId;
+    private Long categoryId;
 }

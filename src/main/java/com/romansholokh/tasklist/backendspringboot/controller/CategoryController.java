@@ -104,7 +104,7 @@ public class CategoryController
     {
         Logger.printClassMethodName(Thread.currentThread());
 //        If the text is empty or null instead of the text, will be returned all categories
-        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getTitle()));
     }
 
 }

@@ -56,12 +56,10 @@ public class Task
         return priority;
     }
 
-
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     public Category getCategory()
     {
         return category;
     }
-
 }
