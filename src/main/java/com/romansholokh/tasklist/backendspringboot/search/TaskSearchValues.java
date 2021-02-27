@@ -15,4 +15,10 @@ public class TaskSearchValues
     private Integer completed;
     private Long priorityId;
     private Long categoryId;
+//    Pagination
+    private Integer pageNumber;
+    private Integer pageSize;
+//    Sorting
+    private String sortColumn;
+    private String sortDirection;
 }
