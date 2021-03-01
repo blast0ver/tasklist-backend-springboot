@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,7 +105,7 @@ public class TaskController
 
     //    Search by any parameters TaskSearchValues
     @PostMapping("/search")
-    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValues taskSearchValues)
+    public ResponseEntity search(@RequestBody TaskSearchValues taskSearchValues)
     {
         Logger.printClassMethodName(Thread.currentThread());
 //        Exclude NullPointerException
@@ -117,15 +118,50 @@ public class TaskController
         String sortColumn = taskSearchValues.getSortColumn() != null ? taskSearchValues.getSortColumn() : null;
         String sortDirection = taskSearchValues.getSortDirection() != null ? taskSearchValues.getSortDirection() : null;
         Sort.Direction direction = sortDirection == null ||
-                                    sortDirection.trim().equals("") ||
-                                    sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+                sortDirection.trim().equals("") ||
+                sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 //        Sorting object
-        Sort sort = Sort.by(direction, sortColumn);
+        /*
+        If sortDirection is EMPTY or NULL, the default sorting direction is "ASC".
+        If sortColumn is NOT EMPTY or NOT NULL, sorting is performed by sortColumn and sortDirection.
+        If sortColumn is EMPTY or NULL, then sorting IS NOT USED at all
+        */
+        Sort sort = null;
+//        If sortColumn EXIST in Task.class, sorting is performed. If it DOES NOT EXIST - sorting is not used.
+        boolean isSortColumnExist = Arrays.stream(Task.class.getDeclaredFields()).anyMatch(field -> field.getName().equals(sortColumn));
+        if (sortColumn != null && isSortColumnExist)
+        {
+            sort = Sort.by(direction, sortColumn);
+        }
+        else
+        {
+            sort = Sort.unsorted();
+        }
+
 //        Pagination object
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+        /*
+        If pageNumber is EMPTY or NULL, the default page number is 0.
+        If pageSize is NOT EMPTY or NOT NULL, pagination is performed by pageNumber and pageSize.
+        If pageSize is EMPTY or NULL, then pagination IS NOT USED at all
+        */
+        PageRequest pageRequest = null;
+        if (pageSize != null)
+        {
+            if (pageNumber == null)
+            {
+                pageNumber = 0;
+            }
+            pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+        }
+        else
+        {
+//            Sorting request result
+            return ResponseEntity.ok(taskRepository.findByParams(title, completed, priorityId, categoryId, sort));
+        }
+
 //        Paginated request result
-        Page result = taskRepository.findByParams(title, completed, priorityId, categoryId, pageRequest);
+        Page<Task> result = taskRepository.findByParams(title, completed, priorityId, categoryId, pageRequest);
 
         return ResponseEntity.ok(result);
     }
