@@ -1,7 +1,7 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
-import com.romansholokh.tasklist.backendspringboot.repo.CategoryRepository;
+import com.romansholokh.tasklist.backendspringboot.service.CategoryService;
 import com.romansholokh.tasklist.backendspringboot.search.CategorySearchValues;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,18 +16,18 @@ import java.util.Optional;
 @RequestMapping("/category")
 public class CategoryController
 {
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository)
+    public CategoryController(CategoryService categoryService)
     {
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/getAll")
     public List<Category> getAll()
     {
         Logger.printClassMethodName(Thread.currentThread());
-        List<Category> list = categoryRepository.findAll();
+        List<Category> list = categoryService.getAll();
 
         return list;
     }
@@ -45,7 +45,7 @@ public class CategoryController
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryRepository.save(category));
+        return ResponseEntity.ok(categoryService.add(category));
     }
 
     @PutMapping("/update")
@@ -56,12 +56,16 @@ public class CategoryController
         {
             return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
         }
+        else if (!categoryService.existById(category.getId()))
+        {
+            return new ResponseEntity("id = " + category.getId() + " does not exist", HttpStatus.NOT_ACCEPTABLE);
+        }
         else if (category.getTitle() == null || category.getTitle().trim().length() == 0)
         {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
-
-        return ResponseEntity.ok(categoryRepository.save(category));
+        
+        return ResponseEntity.ok(categoryService.update(category));
     }
 
     @GetMapping("/id/{id}")
@@ -69,7 +73,7 @@ public class CategoryController
     {
         Logger.printClassMethodName(Thread.currentThread());
         Category category = null;
-        Optional<Category> optional = categoryRepository.findById(id);
+        Optional<Category> optional = categoryService.getById(id);
         if (optional.isPresent())
         {
             category = optional.get();
@@ -88,7 +92,7 @@ public class CategoryController
         Logger.printClassMethodName(Thread.currentThread());
         try
         {
-            categoryRepository.deleteById(id);
+            categoryService.deleteById(id);
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -104,7 +108,7 @@ public class CategoryController
     {
         Logger.printClassMethodName(Thread.currentThread());
 //        If the text is empty or null instead of the text, will be returned all categories
-        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getTitle()));
+        return ResponseEntity.ok(categoryService.search(categorySearchValues.getTitle()));
     }
 
 }
