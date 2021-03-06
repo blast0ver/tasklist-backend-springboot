@@ -1,7 +1,7 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Priority;
-import com.romansholokh.tasklist.backendspringboot.repo.PriorityRepository;
+import com.romansholokh.tasklist.backendspringboot.service.PriorityService;
 import com.romansholokh.tasklist.backendspringboot.search.PrioritySearchValues;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,18 +16,18 @@ import java.util.Optional;
 @RequestMapping("/priority")
 public class PriorityController
 {
-    private PriorityRepository priorityRepository;
+    private final PriorityService priorityService;
 
-    public PriorityController(PriorityRepository priorityRepository)
+    public PriorityController(PriorityService priorityService)
     {
-        this.priorityRepository = priorityRepository;
+        this.priorityService = priorityService;
     }
 
     @GetMapping("/getAll")
     public List<Priority> getAll()
     {
         Logger.printClassMethodName(Thread.currentThread());
-        List<Priority> list = priorityRepository.findAllByOrderByIdAsc();
+        List<Priority> list = priorityService.getAll();
 
         return list;
     }
@@ -51,7 +51,7 @@ public class PriorityController
             return new ResponseEntity("missed param or invalid format: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.add(priority));
     }
 
     @PutMapping("/update")
@@ -61,6 +61,10 @@ public class PriorityController
         if (priority.getId() == null || priority.getId() <= 0)
         {
             return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (!priorityService.existById(priority.getId()))
+        {
+            return new ResponseEntity("id = " + priority.getId() + " does not exist", HttpStatus.NOT_ACCEPTABLE);
         }
         else if (priority.getTitle() == null || priority.getTitle().trim().length() == 0)
         {
@@ -73,7 +77,7 @@ public class PriorityController
             return new ResponseEntity("missed param or invalid format: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.update(priority));
     }
 
     @GetMapping("/id/{id}")
@@ -81,7 +85,7 @@ public class PriorityController
     {
         Logger.printClassMethodName(Thread.currentThread());
         Priority priority = null;
-        Optional<Priority> optional = priorityRepository.findById(id);
+        Optional<Priority> optional = priorityService.getById(id);
         if (optional.isPresent())
         {
             priority = optional.get();
@@ -100,7 +104,7 @@ public class PriorityController
         Logger.printClassMethodName(Thread.currentThread());
         try
         {
-            priorityRepository.deleteById(id);
+            priorityService.deleteById(id);
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -114,6 +118,6 @@ public class PriorityController
     public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues)
     {
         Logger.printClassMethodName(Thread.currentThread());
-        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getTitle()));
+        return ResponseEntity.ok(priorityService.search(prioritySearchValues.getTitle()));
     }
 }
