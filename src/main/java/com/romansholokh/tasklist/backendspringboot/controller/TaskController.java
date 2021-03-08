@@ -1,7 +1,7 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Task;
-import com.romansholokh.tasklist.backendspringboot.repo.TaskRepository;
+import com.romansholokh.tasklist.backendspringboot.service.TaskService;
 import com.romansholokh.tasklist.backendspringboot.search.TaskSearchValues;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,18 +20,18 @@ import java.util.Optional;
 @RequestMapping("/task")
 public class TaskController
 {
-    private TaskRepository taskRepository;
+    private TaskService taskService;
 
-    public TaskController(TaskRepository taskRepository)
+    public TaskController(TaskService taskService)
     {
-        this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     @GetMapping("/getAll")
     public List<Task> getAll()
     {
         Logger.printClassMethodName(Thread.currentThread());
-        List<Task> list = taskRepository.findAll();
+        List<Task> list = taskService.getAll();
 
         return list;
     }
@@ -48,8 +48,12 @@ public class TaskController
         {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
+        else if (task.getCompleted() == null || task.getCompleted() < 0 || task.getCompleted() > 1)
+        {
+            return new ResponseEntity("missed param or invalid format: completed must be 0 or 1", HttpStatus.NOT_ACCEPTABLE);
+        }
 
-        return ResponseEntity.ok(taskRepository.save(task));
+        return ResponseEntity.ok(taskService.add(task));
     }
 
     @PutMapping("/update")
@@ -60,13 +64,20 @@ public class TaskController
         {
             return new ResponseEntity("missed param or invalid format: id MUST be greater than 0", HttpStatus.NOT_ACCEPTABLE);
         }
+        else if (!taskService.existById(task.getId()))
+        {
+            return new ResponseEntity("id = " + task.getId() + " does not exist", HttpStatus.NOT_ACCEPTABLE);
+        }
         else if (task.getTitle() == null || task.getTitle().trim().length() == 0)
         {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
-        taskRepository.save(task);
+        else if (task.getCompleted() == null || task.getCompleted() < 0 || task.getCompleted() > 1)
+        {
+            return new ResponseEntity("missed param or invalid format: completed must be 0 or 1", HttpStatus.NOT_ACCEPTABLE);
+        }
 
-        return ResponseEntity.ok("Update was successful");
+        return ResponseEntity.ok(taskService.update(task));
     }
 
     @GetMapping("/id/{id}")
@@ -74,7 +85,7 @@ public class TaskController
     {
         Logger.printClassMethodName(Thread.currentThread());
         Task task = null;
-        Optional<Task> optional = taskRepository.findById(id);
+        Optional<Task> optional = taskService.getById(id);
         if (optional.isPresent())
         {
             task = optional.get();
@@ -93,7 +104,7 @@ public class TaskController
         Logger.printClassMethodName(Thread.currentThread());
         try
         {
-            taskRepository.deleteById(id);
+            taskService.deleteById(id);
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -157,11 +168,11 @@ public class TaskController
         else
         {
 //            Sorting request result
-            return ResponseEntity.ok(taskRepository.findByParams(title, completed, priorityId, categoryId, sort));
+            return ResponseEntity.ok(taskService.search(title, completed, priorityId, categoryId, sort));
         }
 
 //        Paginated request result
-        Page<Task> result = taskRepository.findByParams(title, completed, priorityId, categoryId, pageRequest);
+        Page<Task> result = taskService.search(title, completed, priorityId, categoryId, pageRequest);
 
         return ResponseEntity.ok(result);
     }
