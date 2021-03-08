@@ -45,10 +45,14 @@ public class PriorityController
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
         else if (priority.getColor() == null
-                || priority.getColor().trim().length() == 0
-                || !(priority.getColor().startsWith("#")))
+                || priority.getColor().trim().length() == 0)
         {
-            return new ResponseEntity("missed param or invalid format: color", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+        else if (!(priority.getColor().startsWith("#")))
+        {
+            return new ResponseEntity("invalid format: color code must starts with '#' sign",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
 
         return ResponseEntity.ok(priorityService.add(priority));
@@ -70,11 +74,10 @@ public class PriorityController
         {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
-        else if (priority.getColor() == null
-                || priority.getColor().trim().length() == 0
-                || !(priority.getColor().startsWith("#")))
+        else if (priority.getColor() != null && !(priority.getColor().startsWith("#")))
         {
-            return new ResponseEntity("missed param or invalid format: color", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("invalid format: color code must starts with '#' sign",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
 
         return ResponseEntity.ok(priorityService.update(priority));
