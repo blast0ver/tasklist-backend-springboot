@@ -1,20 +1,23 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Stat;
-import com.romansholokh.tasklist.backendspringboot.repo.StatRepository;
+import com.romansholokh.tasklist.backendspringboot.service.StatService;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Optional;
+
 @Controller
 public class StatController
 {
-    private StatRepository statRepository;
+    private StatService statService;
 
-    public StatController(StatRepository statRepository)
+    public StatController(StatService statService)
     {
-        this.statRepository = statRepository;
+        this.statService = statService;
     }
 
     @GetMapping("/stat")
@@ -22,8 +25,17 @@ public class StatController
     {
         Logger.printClassMethodName(Thread.currentThread());
         Long defaultId = 1L;
+        Stat stat = null;
+        Optional<Stat> optional = statService.getById1(defaultId);
+        if (optional.isPresent())
+        {
+            stat = optional.get();
+        }
+        else
+        {
+            return new ResponseEntity("An error occurred. Stat not found", HttpStatus.NOT_ACCEPTABLE);
+        }
 
-        return ResponseEntity.ok(statRepository.findById(defaultId).get());
-
+        return ResponseEntity.ok(stat);
     }
 }
