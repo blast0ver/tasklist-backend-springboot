@@ -6,11 +6,13 @@ import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Optional;
 
 @Controller
+@CrossOrigin(origins = "http://localhost:4200") //Allow this resource to receive data from the backend
 public class StatController
 {
     private StatService statService;

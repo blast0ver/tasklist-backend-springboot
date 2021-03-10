@@ -1,8 +1,8 @@
 package com.romansholokh.tasklist.backendspringboot.controller;
 
 import com.romansholokh.tasklist.backendspringboot.entity.Category;
-import com.romansholokh.tasklist.backendspringboot.service.CategoryService;
 import com.romansholokh.tasklist.backendspringboot.search.CategorySearchValues;
+import com.romansholokh.tasklist.backendspringboot.service.CategoryService;
 import com.romansholokh.tasklist.backendspringboot.util.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/category")
+@CrossOrigin(origins = "http://localhost:4200") //Allow this resource to receive data from the backend
 public class CategoryController
 {
     private CategoryService categoryService;

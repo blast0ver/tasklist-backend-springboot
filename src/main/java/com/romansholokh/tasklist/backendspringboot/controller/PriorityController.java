@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/priority")
+@CrossOrigin(origins = "http://localhost:4200") //Allow this resource to receive data from the backend
 public class PriorityController
 {
     private final PriorityService priorityService;

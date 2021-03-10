@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/task")
+@CrossOrigin(origins = "http://localhost:4200") //Allow this resource to receive data from the backend
 public class TaskController
 {
     private TaskService taskService;
